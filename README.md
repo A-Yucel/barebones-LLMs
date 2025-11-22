@@ -45,15 +45,15 @@ In order to have a baseline I also decided to train a model from scratch for 500
 Now that we have those ready, lets see the results. 
 ## Model 1
 Note: from the "from scratch 5k" I subtracted 0.3 to bring it to the same scale as others, because here the important thing is not the absolute values. 
-![[assets/3206.png]]
+![Graph](./assets/3206.png)
 
 Lets bring all to the same scale and match it at 16kv heads while preserving the shape of the line to better understand the predictive performance. 
-![[assets/3820.png]]
+![Graph](./assets/3820.png)
 ### Analysis:
 One of the essential things for this to work is that the starting point should be unbiased, but when we look at CPT MHA Reuse (starting from mha, and removing the unnecessary heads) and CPT MQA Reuse (starting from mqa, and duplicating the kv head) we can clearly see that for both of them when the target kv heads are closer to original models kv heads the performance is better, and specially when not, the performance is much worse. And their predictive performance it not good. 
 To mitigate this when we try initializing the kv heads randomly, the biases are somewhat mitigated (while still there is some) and the predictive performance is competitive maybe even better than training from randomly initialized weights for 5k steps.
 To mitigate it further averaging both MQA and MHA seems to work pretty well here, **for now...**
-![[assets/3918.png]]
+![[./assets/3918.png]]
 ## Model 2
 Note: Here for the mqa 8q2kv run I finished it early as the results were not promising, and infered the results by looking at 8q4kv and 8q1kv.
 ![[assets/2227.png]]
