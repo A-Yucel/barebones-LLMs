@@ -1,10 +1,8 @@
+# Exploring barebones LLMs for more accurate ablations
 **TL;DR:** I attempted to reduce the compute cost of architectural ablations by training a single "Barebones" model and adapting it via Continuous Pretraining (CPT).  
 **Result:** My current experiments (predicting the performance of different qkv ratios) failed to reliably predict the performance of models trained from scratch because the models had architectural biases.  
 **Key Finding:** Adapting a MHA/MQA pre-trained model to GQA introduces strong architectural biases. A better low-cost proxy for this case was simply training a model from scratch for fewer steps (10% of total duration), which yielded higher predictive correlation than the CPT method. But I still believe that this method be effective when properly done.
-
-
 ---
-
 ## 1. The Concept: Barebones LLMs
 Ablation studies are expensive. To find the optimal KV-head ratio or tokenizer, we typically train multiple models from scratch.  
 **The Hypothesis:** Can we train a single, "unopinionated" ablation model (a Barebones LLM) and adapt it to different settings via cheap Continuous Pretraining (CPT)?
