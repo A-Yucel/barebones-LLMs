@@ -44,21 +44,23 @@ In order to have a baseline I also decided to train a model from scratch for 500
 
 Now that we have those ready, lets see the results. 
 ## Model 1
-Note: from the "from scratch 5k" I subtracted 0.3 to bring it to the same scale as others, because here the important thing is not the absolute values. 
+Note: from the "from scratch 5k" I subtracted 0.3 to bring it to the same scale as others, because here the important thing is not the absolute values.
+
 ![Graph](./assets/3206.png)
 
 Lets bring all to the same scale and match it at 16kv heads while preserving the shape of the line to better understand the predictive performance. 
+
 ![Graph](./assets/3820.png)
 ### Analysis:
 One of the essential things for this to work is that the starting point should be unbiased, but when we look at CPT MHA Reuse (starting from mha, and removing the unnecessary heads) and CPT MQA Reuse (starting from mqa, and duplicating the kv head) we can clearly see that for both of them when the target kv heads are closer to original models kv heads the performance is better, and specially when not, the performance is much worse. And their predictive performance it not good. 
 To mitigate this when we try initializing the kv heads randomly, the biases are somewhat mitigated (while still there is some) and the predictive performance is competitive maybe even better than training from randomly initialized weights for 5k steps.
 To mitigate it further averaging both MQA and MHA seems to work pretty well here, **for now...**
-![[./assets/3918.png]]
+![Graph](./assets/3918.png)
 ## Model 2
 Note: Here for the mqa 8q2kv run I finished it early as the results were not promising, and infered the results by looking at 8q4kv and 8q1kv.
-![[assets/2227.png]]
+![Graph](./assets/2227.png)
 Matched at 16kv heads:
-![[assets/2250.png]]
+![Graph](./assets//2250.png)
 The second model tells a whole different story, things flip upside down drastically. Here we observe that the predictive performance is not even close. And we see that the best performing one is the baseline (purple). 
 ## Conclusion
 The results seem pretty contradictory, and it seems like this method has no predictive performance. But I missed a very important detail for it to work, **the starting point**. It should have been **unbiased**, but be it mqa or mha is not. A model pretrained with MHA/MQA is deeply optimized for that specific information flow. When we prune/duplicate heads for GQA adaptation we are breaking the model's learned internal routing. The CPT phase spends most of its compute "repairing" the damage caused by the architecture change rather than learning how that architecture performs naturally. As clearly seen from mha and mqa results, rather than being predictive we see a clear pattern: when the kv heads decrease the loss increases with a much higher slop for mha and with a smaller slop for mqa. For the first model the actual results showed the same pattern, because of that the predictive performance was very good, but for the second model this was not the case so it did not worked well over there.
