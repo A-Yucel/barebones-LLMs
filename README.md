@@ -8,7 +8,7 @@
 Ablation studies are expensive. To find the optimal KV-head ratio or tokenizer, we typically train multiple models from scratch. The idea is that we train a single, "unopinionated" ablation model (a Barebones LLM) and adapt it to different settings via cheap Continuous Pretraining (CPT)
 - **Example A (Tokenizers):** Train a byte-level model, then CPT it into different tokenizers.
 - **Example B (Attention):** Train a standard MHA (or MQA) model, then CPT it into GQA with varying KV-head ratios.
-If successful, this would allow us to run extensive experiments using a fraction of the compute.
+If successful, this would allow us to run extensive experiments using a fraction of the compute. Let's do some experiments to test it.
 ## Experiments details:
 The experiments are done on 1X0m scale, the exact parameters depends on selected kv heads, with 2 different models. The models are trained aprox. to chinchilla (3b and 3.6b, respectively). 
 Here are some more details about the model training:
@@ -28,11 +28,11 @@ Here are some more details about the model training:
 In order to measure the predictive performance of the above mentioned method I trained a model from scratch with different q/kv ratios (while keeping the other settings the same), for the first model 32q32kv (32 query heads and 32 kv heads), 32q16kv, 32q4kv and 32q1kv, and for the second model 8q8kv, 8q4kv, 8q2kv and 8q1kv. This would work as the ground truth.
 
 First I had to decide how to do the continuous pretraining, to find that I had to answer this questions:
-- which checkpoint to start? The last one or the one just before decay?
-	- After doing some not very scientific experiments I observed that which checkpoint I started did not had a very big impact. So decided to stick with the last checkpoint.
-- which scheduler to select?
-	- after some experiments I observed that just doing decay had the best performance test loss wise and decided to go with that.
-- for how many steps to do the CPT?
+- Which checkpoint to start? The last one or the one just before decay?
+	- After doing some short experiments I observed that which checkpoint I started did not had a very big impact. So decided to stick with the last checkpoint.
+- Which scheduler to select?
+	- Again after some experiments I observed that just doing decay had the best performance test loss wise and decided to go with that.
+- For how many steps to do the CPT?
 	- I decided to go for 5k and 6k steps respectively, which is %10 of the pretraining (maybe for bigger runs this percentage could be smaller).
 - Start from MQA or MHA?
 	- I decided to to test both. 
