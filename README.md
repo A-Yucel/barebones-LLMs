@@ -5,7 +5,7 @@
 - **Key Finding:** Adapting a MHA/MQA pre-trained model to GQA introduces strong architectural biases. A better low-cost proxy for this case was simply training a model from scratch for fewer steps (10% of total duration), which yielded higher predictive correlation than the CPT method. But I still believe that this method be effective when properly done.
 ---
 ## 1. The Concept: Barebones LLMs
-Ablation studies are expensive. To find the optimal KV-head ratio or tokenizer, we typically train multiple models from scratch. The idea is that we train a single, "unopinionated" ablation model (a Barebones LLM) and adapt it to different settings via cheap Continuous Pretraining (CPT)?
+Ablation studies are expensive. To find the optimal KV-head ratio or tokenizer, we typically train multiple models from scratch. The idea is that we train a single, "unopinionated" ablation model (a Barebones LLM) and adapt it to different settings via cheap Continuous Pretraining (CPT)
 - **Example A (Tokenizers):** Train a byte-level model, then CPT it into different tokenizers.
 - **Example B (Attention):** Train a standard MHA (or MQA) model, then CPT it into GQA with varying KV-head ratios.
 If successful, this would allow us to run extensive experiments using a fraction of the compute.
